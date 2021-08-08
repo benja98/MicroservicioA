@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
+
 import com.sv.microservicioa.dto.VentasDto;
 import com.sv.microservicioa.modelo.Ventas;
 import com.sv.microservicioa.service.VentasService;
@@ -48,23 +48,45 @@ public class VentasRest {
 	}  
 	
 	
-	@GetMapping(value = "/totalizarSubTotales")
-	private ResponseEntity<Double> totalizarSubT() {
-		 
-		ResponseEntity<Optional<Ventas>> response = null;
-		try {
-//			vS.totalizarSubT();
-			response = responseExceptions.createOkResponse(null, "0", "ok");
-			
-		} catch (DatosNoEncontradosException e) {
-			response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-			response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
-		}
-		System.out.println("Subtotales: ");
-		return ResponseEntity.ok(vS.totalizarSubT());	
-	}  
+	 
 	
+	
+	  @GetMapping(value = "/totalizarSubTotales")
+	    private ResponseEntity<String> totalizarSubT() {
+	        
+	        ResponseEntity<Optional<Ventas>> response = null;
+	        try {
+ 	           // vS.totalizarSubT();
+	            response = responseExceptions.createOkResponse(null, "0", "ok");
+	           
+	        } catch (DatosNoEncontradosException e) {
+	            response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
+	        }
+	        System.out.println("Subtotales: ");
+	        return ResponseEntity.ok(vS.imprimirCalculos());   
+	    }
+	
+	  
+	  
+	  @GetMapping(value = "/totalizarEfectivoPercibido")
+	    private ResponseEntity<String> efectivoPercibido() {
+	        
+	        ResponseEntity<Optional<Ventas>> response = null;
+	        try {
+	           // vS.totalizarSubT();
+	            response = responseExceptions.createOkResponse(null, "0", "ok");
+	           
+	        } catch (DatosNoEncontradosException e) {
+	            response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
+	        }
+	        System.out.println("Subtotales: ");
+	        return ResponseEntity.ok(vS.imprimirEfectivoPercibido());   
+	    }
 
 }

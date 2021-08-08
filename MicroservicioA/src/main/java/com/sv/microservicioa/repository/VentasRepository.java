@@ -18,8 +18,24 @@ public interface VentasRepository extends JpaRepository<Ventas, Integer>{
 	Ventas buscarSiYaExiste(int factura);
 	 
 	//2.Totalizar todos los subTotales de un lote de facturas
-	@Query("select sum(v.subTotal) from Ventas v where impaga='false'")
+	@Query("select sum(v.subTotal) from Ventas v where v.impaga = 'false'")
 	Double totalizarSubTotales();
+	
+	
+	// A continuacion , querys para conocer el efectivo percibido de las formas de pago:
+	@Query("select sum(v.totalaPagar) from Ventas v where v.formaPago = 'tarjeta' ")
+	Double formaPagoTarjeta();
+	
+	@Query("select sum(v.totalaPagar) from Ventas v where v.formaPago = 'credito' ")
+	Double formaPagoCredito();
+	
+	@Query("select sum(v.totalaPagar) from Ventas v where v.formaPago = 'contado' ")
+	Double formaPagoContado();
+	
+	@Query("select sum(v.totalaPagar) from Ventas v where v.formaPago = 'cheque' ")
+	Double formaPagoCheque();
+	
+	
  
 	 
 }
