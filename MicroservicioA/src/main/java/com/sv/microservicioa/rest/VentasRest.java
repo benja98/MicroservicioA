@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import java.util.Optional;
 import com.sv.microservicioa.dto.VentasDto;
 import com.sv.microservicioa.modelo.Ventas;
 import com.sv.microservicioa.service.VentasService;
@@ -46,16 +48,13 @@ public class VentasRest {
 	}  
 	
 	
-	
-	
 	@GetMapping(value = "/totalizarSubTotales")
-	private ResponseEntity<List<Ventas>> totalizarSubT() {
+	private ResponseEntity<Double> totalizarSubT() {
 		 
-		ResponseEntity<List<Ventas>> response = null;
+		ResponseEntity<Optional<Ventas>> response = null;
 		try {
-			
-			List<Ventas> listaSubTotales = vS.totalizarSubT();
-			response = responseExceptions.createOkResponse(listaSubTotales, "0", "ok");
+//			vS.totalizarSubT();
+			response = responseExceptions.createOkResponse(null, "0", "ok");
 			
 		} catch (DatosNoEncontradosException e) {
 			response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
@@ -63,7 +62,8 @@ public class VentasRest {
 			e.printStackTrace();
 			response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 		}
-		return response;
+		System.out.println("Subtotales: ");
+		return ResponseEntity.ok(vS.totalizarSubT());	
 	}  
 	
 

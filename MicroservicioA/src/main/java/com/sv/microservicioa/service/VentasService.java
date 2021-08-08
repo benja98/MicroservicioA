@@ -137,16 +137,18 @@ public class VentasService {
 	
 	 
 	// metodo para traer la suma de los subtotales
-	public List<Ventas> totalizarSubT(){
-		List<Ventas> lv = null;
-		
+	 
+	public Double totalizarSubT(){
+		Double lv = null;
+		try {
 		lv = vR.totalizarSubTotales();
-		return lv;
+		if(lv < 0 || lv == null) {
+			System.out.println("Ese registro no existe") ;
+		}  
+	}catch(Exception e) {
+		e.printStackTrace();
+		}
+		return lv;	
 	}
-	 
-	
-	 
-	
-	
-
 }
+	

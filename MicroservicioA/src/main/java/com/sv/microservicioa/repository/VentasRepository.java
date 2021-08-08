@@ -18,8 +18,8 @@ public interface VentasRepository extends JpaRepository<Ventas, Integer>{
 	Ventas buscarSiYaExiste(int factura);
 	 
 	//2.Totalizar todos los subTotales de un lote de facturas
-	@Query("select v , sum(v.subTotal) from Ventas v GROUP BY v.fecha")
-	List<Ventas> totalizarSubTotales();
+	@Query("select sum(v.subTotal) from Ventas v where impaga='false'")
+	Double totalizarSubTotales();
  
 	 
 }
