@@ -85,7 +85,6 @@ public class VentasRest {
 	            e.printStackTrace();
 	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 	        }
-	        System.out.println("Subtotales: ");
 	        return ResponseEntity.ok(vS.imprimirEfectivoPercibido());   
 	    }
 
