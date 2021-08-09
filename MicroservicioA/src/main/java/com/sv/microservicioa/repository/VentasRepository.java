@@ -34,8 +34,5 @@ public interface VentasRepository extends JpaRepository<Ventas, Integer>{
 	
 	@Query("select sum(v.totalaPagar) from Ventas v where v.formaPago = 'cheque' ")
 	Double formaPagoCheque();
-	
-	
- 
 	 
 }
