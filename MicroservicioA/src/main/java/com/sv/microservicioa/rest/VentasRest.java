@@ -32,14 +32,12 @@ public class VentasRest {
 
 	
 	
-	
 	@PostMapping(value = "/guardar")
 	private ResponseEntity<?> guardar(@RequestBody VentasDto vdto) {
-		 
 		ResponseEntity<?> response = null;
 		try {
 			
-			  vS.guardarVentas(vdto);
+			vS.guardarVentas(vdto);
 			response = responseExceptions.createOkResponse(null, "0", "ok");
 			
 		} catch (DatosNoEncontradosException e) {
@@ -71,7 +69,7 @@ public class VentasRest {
 	} 
 	
 	
-	@DeleteMapping(value = "/factura/{id}")																				
+	@DeleteMapping(value = "/eliminar/{id}")																				
 	private ResponseEntity<Void> eliminarPersona (@PathVariable("id") Integer id){
 		ResponseEntity<Void> response = null;	
 	try {

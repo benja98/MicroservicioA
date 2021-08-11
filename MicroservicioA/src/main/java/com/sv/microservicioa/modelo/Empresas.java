@@ -16,9 +16,10 @@ public class Empresas implements Serializable{
 	
 	//Variables:
 	@Id
+    @Column(name="id")
 	private int id;
 	
-	@Column
+	 @Column(name="empresa")
 	private String empresa;
 
 	
