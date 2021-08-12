@@ -1,8 +1,6 @@
 package com.sv.microservicioa.dto;
 
 import java.io.Serializable;
-import java.util.Date; 
-
 public class VentasDto implements Serializable {
 	 
 	private static final long serialVersionUID = 1L;

@@ -26,18 +26,17 @@ public class VentasRest {
 
 	// Inyecciones:
 	@Autowired
-	private VentasService vS;
+	private VentasService vservice;
 	@Autowired
 	private ResponseEntityExceptions responseExceptions;
 
 	
 	
 	@PostMapping(value = "/guardar")
-	private ResponseEntity<?> guardar(@RequestBody VentasDto vdto) {
+	public String SaveList(@RequestBody List<VentasDto> vdto) {
 		ResponseEntity<?> response = null;
 		try {
 			
-			vS.guardarVentas(vdto);
 			response = responseExceptions.createOkResponse(null, "0", "ok");
 			
 		} catch (DatosNoEncontradosException e) {
@@ -46,34 +45,34 @@ public class VentasRest {
 			e.printStackTrace();
 			response = responseExceptions.createFailResponse(null, "409", "error al ingresar datos");
 		}
-		return response;
+		return vservice.saveUserList(vdto);
 	}  
 	
 	
-	@PutMapping(value = "/editar")
-	private ResponseEntity<?> editar(@RequestBody VentasDto vdto) {
-		 
-		ResponseEntity<?> response = null;
-		try {
-			
-			  vS.EditarVentas(vdto);
-			response = responseExceptions.createOkResponse(null, "0", "ok");
-			
-		} catch (DatosNoEncontradosException e) {
-			response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-			response = responseExceptions.createFailResponse(null, "409", "error al ingresar datos");
-		}
-		return response;
-	} 
+//	@PutMapping(value = "/editar")
+//	private ResponseEntity<?> editar(@RequestBody VentasDto vdto) {
+//		 
+//		ResponseEntity<?> response = null;
+//		try {
+//			
+//			  vS.EditarVentas(vdto);
+//			response = responseExceptions.createOkResponse(null, "0", "ok");
+//			
+//		} catch (DatosNoEncontradosException e) {
+//			response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			response = responseExceptions.createFailResponse(null, "409", "error al ingresar datos");
+//		}
+//		return response;
+//	} 
 	
 	
 	@DeleteMapping(value = "/eliminar/{id}")																				
 	private ResponseEntity<Void> eliminarPersona (@PathVariable("id") Integer id){
 		ResponseEntity<Void> response = null;	
 	try {
-		vS.delete(id);
+		vservice.delete(id);
 		responseExceptions.createOkResponse(null, "0", "ok");
 	}catch (DatosNoEncontradosException e) {
 		response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
@@ -103,7 +102,7 @@ public class VentasRest {
 	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 	        }
 	        System.out.println("Subtotales: ");
-	        return ResponseEntity.ok(vS.imprimirCalculos());   
+	        return ResponseEntity.ok(vservice.imprimirCalculos());   
 	    }
 	
 	  
@@ -122,7 +121,7 @@ public class VentasRest {
 	            e.printStackTrace();
 	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 	        }
-	        return ResponseEntity.ok(vS.imprimirEfectivoPercibido());   
+	        return ResponseEntity.ok(vservice.imprimirEfectivoPercibido());   
 	    }
 
 }
