@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
-import com.sv.microservicioa.dto.VentasDto;
+import com.sv.microservicioa.dto.EditarDto;
+import com.sv.microservicioa.dto.GuardarDto;
+import com.sv.microservicioa.dto.ListDto;
 import com.sv.microservicioa.modelo.Ventas;
 import com.sv.microservicioa.service.VentasService;
 import com.sv.microservicioa.util.DatosNoEncontradosException;
@@ -26,17 +28,18 @@ public class VentasRest {
 
 	// Inyecciones:
 	@Autowired
-	private VentasService vservice;
+	private VentasService ventasservice;
 	@Autowired
 	private ResponseEntityExceptions responseExceptions;
 
 	
-	
-	@PostMapping(value = "/guardar")
-	public String SaveList(@RequestBody List<VentasDto> vdto) {
-		ResponseEntity<?> response = null;
+////////////////----GUARDAR-----///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		@PostMapping(value = "/guardar")
+	public ResponseEntity<ListDto> SaveList (@RequestBody ListDto vdto) {
+		ResponseEntity<ListDto> response = null;
 		try {
-			
+			ventasservice.saveUserList(vdto);
 			response = responseExceptions.createOkResponse(null, "0", "ok");
 			
 		} catch (DatosNoEncontradosException e) {
@@ -45,34 +48,36 @@ public class VentasRest {
 			e.printStackTrace();
 			response = responseExceptions.createFailResponse(null, "409", "error al ingresar datos");
 		}
-		return vservice.saveUserList(vdto);
+		return response;
 	}  
 	
+////////////////----EDITAR-----///////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-//	@PutMapping(value = "/editar")
-//	private ResponseEntity<?> editar(@RequestBody VentasDto vdto) {
-//		 
-//		ResponseEntity<?> response = null;
-//		try {
-//			
-//			  vS.EditarVentas(vdto);
-//			response = responseExceptions.createOkResponse(null, "0", "ok");
-//			
-//		} catch (DatosNoEncontradosException e) {
-//			response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			response = responseExceptions.createFailResponse(null, "409", "error al ingresar datos");
-//		}
-//		return response;
-//	} 
+	@PutMapping(value = "/editar")
+	private ResponseEntity<?> editar(@RequestBody EditarDto vdto) {
+		 
+		ResponseEntity<?> response = null;
+		try {
+			
+			ventasservice.EditarVentas(vdto);
+			response = responseExceptions.createOkResponse(null, "0", "ok");
+			
+		} catch (DatosNoEncontradosException e) {
+			response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			response = responseExceptions.createFailResponse(null, "409", "error al editar datos");
+		}
+		return response;
+	} 
 	
-	
+////////////////----ELIMINAR-----///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	@DeleteMapping(value = "/eliminar/{id}")																				
-	private ResponseEntity<Void> eliminarPersona (@PathVariable("id") Integer id){
+	private ResponseEntity<Void> eliminarFactura (@PathVariable("id") Integer facturas){
 		ResponseEntity<Void> response = null;	
 	try {
-		vservice.delete(id);
+		ventasservice.delete(facturas);
 		responseExceptions.createOkResponse(null, "0", "ok");
 	}catch (DatosNoEncontradosException e) {
 		response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
@@ -93,7 +98,8 @@ public class VentasRest {
 	        ResponseEntity<Optional<Ventas>> response = null;
 	        try {
  	           // vS.totalizarSubT();
-	            response = responseExceptions.createOkResponse(null, "0", "ok");
+	        	ventasservice.imprimirCalculos();
+	            responseExceptions.createOkResponse(null, "0", "ok");
 	           
 	        } catch (DatosNoEncontradosException e) {
 	            response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
@@ -102,7 +108,7 @@ public class VentasRest {
 	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 	        }
 	        System.out.println("Subtotales: ");
-	        return ResponseEntity.ok(vservice.imprimirCalculos());   
+	        return  responseExceptions.createOkResponse(null, "0", "ok");  
 	    }
 	
 	  
@@ -113,15 +119,15 @@ public class VentasRest {
 	        ResponseEntity<Optional<Ventas>> response = null;
 	        try {
 	           // vS.totalizarSubT();
-	            response = responseExceptions.createOkResponse(null, "0", "ok");
+	        	ventasservice.imprimirEfectivoPercibido();
 	           
 	        } catch (DatosNoEncontradosException e) {
 	            response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
+	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo el efectivo persivido");
 	        }
-	        return ResponseEntity.ok(vservice.imprimirEfectivoPercibido());   
+	        return responseExceptions.createOkResponse(null, "0", "ok");
 	    }
 
 }

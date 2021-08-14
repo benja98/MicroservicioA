@@ -2,8 +2,11 @@ package com.sv.microservicioa.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,15 +19,17 @@ public class Empresas implements Serializable{
 	
 	//Variables:
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name="id")
-	private int id;
+	private Integer id;
 	
 	 @Column(name="empresa")
 	private String empresa;
 
 	
 	// Constructores:
-	public Empresas(int id, String empresa) {
+	public Empresas(Integer id, String empresa) {
 		super();
 		this.id = id;
 		this.empresa = empresa;
@@ -37,11 +42,11 @@ public class Empresas implements Serializable{
 	
 	// Get y set:
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

@@ -1,10 +1,14 @@
 package com.sv.microservicioa.modelo;
 
 import java.io.Serializable;
-import java.util.Date; 
+import java.util.Date;
+
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,8 +27,10 @@ public class Ventas implements Serializable{
     private static final long serialVersionUID = 1L;
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name="id")
-    private int id;
+    private Integer id;
     
     @Column(name="fecha") 
     private String fecha;
@@ -41,7 +47,7 @@ public class Ventas implements Serializable{
     @Column(name="fechaventa")
     private String fechaVenta;
 
-	public Ventas(int id, String fecha, Empresas empresa, Facturas factura, String fechaVenta) {
+	public Ventas(Integer id, String fecha, Empresas empresa, Facturas factura, String fechaVenta) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
@@ -54,11 +60,11 @@ public class Ventas implements Serializable{
 		super();
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

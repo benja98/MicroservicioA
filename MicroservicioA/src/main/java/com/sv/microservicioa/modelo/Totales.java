@@ -2,8 +2,11 @@ package com.sv.microservicioa.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,8 +17,10 @@ public class Totales implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name="id")
-    private int id;
+    private Integer id;
 	
 	@Column(name="impaga")
 	private String impaga;
@@ -41,7 +46,7 @@ public class Totales implements Serializable{
     @Column(name="totalapagar")
     private Double totalaPagar;
 
-	public Totales(int id, String impaga, String fechapago, String formaPago, Double subTotal, Double subtoTaliva,
+	public Totales(Integer id, String impaga, String fechapago, String formaPago, Double subTotal, Double subtoTaliva,
 			Double subTotalcesc, Double subTotaldescuentos, Double totalaPagar) {
 		super();
 		this.id = id;
@@ -59,11 +64,11 @@ public class Totales implements Serializable{
 		super();
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

@@ -1,233 +1,153 @@
 package com.sv.microservicioa.service;
-import java.util.ArrayList;
+
 import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import java.security.GuardedObject;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.sv.microservicioa.commons.AppConstans;
-import com.sv.microservicioa.dto.VentasDto;
+import com.sv.microservicioa.dto.EditarDto;
+import com.sv.microservicioa.dto.GuardarDto;
+import com.sv.microservicioa.dto.ListDto;
+import com.sv.microservicioa.modelo.Empresas;
 import com.sv.microservicioa.modelo.Facturas;
+import com.sv.microservicioa.modelo.Totales;
 import com.sv.microservicioa.modelo.Ventas;
-import com.sv.microservicioa.repository.MicroserverArepository;
+import com.sv.microservicioa.repository.EmpresasRepository;
+import com.sv.microservicioa.repository.TotalesRepository;
+import com.sv.microservicioa.repository.VentasRepository;
+import com.sv.microservicioa.repository.FacturasRepository;
+import com.sv.microservicioa.repository.GuardarRepository;
 import com.sv.microservicioa.util.DatosNoEncontradosException;
 
 @Service
 public class VentasService {
-
 	// inyeccion
 	@Autowired
 	private Environment env;
 	@Autowired
-	private MicroserverArepository MAR;
+	VentasRepository ventasrepository;
+	@Autowired
+	TotalesRepository totalesrepository;
+	@Autowired
+	EmpresasRepository empresasrepository;
+	@Autowired
+	FacturasRepository facturaspository;
+	@Autowired
+	GuardarRepository guardarepository;
 
-	
 	// 1. metodo para guardar:
-	public String saveUserList(List<VentasDto> vdto) {
-		List<VentasDto> saveList = new ArrayList<>();
-		MAR.saveAll(vdto).forEach(saveList::add);
-		return "guardando facturas " + saveList.stream().map(u->u.getFactura()).collect(Collectors.toList());
-	}
+		public ListDto saveUserList(ListDto vdto) {
+			ListDto savedList = new ListDto();
+			try {
+				 //declaramos lista a retornar
+//				List<VentasDto> response = new ArrayList<>();
+			   System.out.println(vdto.getDatosList());
+			      //iteramos resultado
+			          for (GuardarDto objeto : vdto.getDatosList()) {	
+			        	  //primer crear total
+			        	  Totales p = new Totales();
+			        	  p.setFechapago(objeto.getFechaPago());
+			        	  p.setImpaga(objeto.getImpaga());
+			        	  p.setFormaPago(objeto.getFormaPago());
+			        	  p.setSubTotal(objeto.getSubTotal());
+			        	  p.setSubtoTaliva(objeto.getSubTotaliva());
+			        	  p.setSubTotalcesc(objeto.getSubTotalcesc());
+			        	  p.setSubTotaldescuentos(objeto.getSubTotaldescuentos());
+			        	  p.setTotalaPagar(objeto.getTotalaPagar());
+			        	  totalesrepository.save(p);
+			        	  
+			        	  //crear factura y a factura meter total
+			        	  Facturas f = new Facturas();
+			        	  f.setNumeroFactura(objeto.getFactura());
+			        	  f.setImpresa(objeto.getImpresa());
+			        	  f.setTipoFactura(objeto.getTipoFactura());
+			        	  f.setTotalesId(p);
+			        	  
+			        	  facturaspository.save(f);
+			        	  //crear empresa
+			        	  Empresas e = new Empresas();
+			        	  e.setId(objeto.getEmpresa());
+			        	  //crear venta, meter empresa a venta y meter factura a venta
+			        	  Ventas v = new Ventas();
+			        	  v.setFecha(objeto.getFecha());
+			        	  v.setFechaVenta(objeto.getFechaVenta());
+			        	  v.setEmpresasId(e);
+			        	  v.setFactura(f);
+			        	  
+			        	  ventasrepository.save(v);
+			        	  
+			          }
+			}
+			catch (DatosNoEncontradosException exc ) {
+				throw exc;
+			  		}catch (Exception e) {
+			  			e.printStackTrace();
+						throw new DatosNoEncontradosException("409", "Error en el servicio guardar");
+			  		}
+				return savedList; 
+		}
+		
+
 	
 
-//	
-//	//metodo para editar
-//	public void EditarVentas(VentasDto vdto) {
-//		try {
-//			// 1. Respectivas validaciones:
-//			if (vdto.getFecha() == null) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FECHA_MSG));
-//					
-//			} if (vdto.getEmpresasId() <= 0){
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IDEMPRESA_MSG));
-//					
-//			} if (vdto.getFactura() <= 0) { 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FACTURA_MSG));
-//					
-//			} if (vdto.getFechaVenta() == null) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FECHAVENTA_MSG));
-//				
-//			} if (vdto.getFechaPago() == null){
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FECHAPAGO_MSG));
-//					
-//			} if (vdto.getImpaga() == null ||vdto.getImpaga().isEmpty()){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IMPAGA_MSG));
-//					
-//			} if (vdto.getImpresa() == null ||vdto.getImpresa().isEmpty()) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IMPRESA_MSG));
-//					
-//			} if (vdto.getFormaPago() == null ||vdto.getFormaPago().isEmpty()){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FORMAPAGO_MSG));
-//				
-//			} if (vdto.getTipoFactura() == null ||vdto.getTipoFactura().isEmpty()){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_TIPOFACTURA_MSG));
-//					
-//			} if(vdto.getSubTotal() == null || vdto.getSubTotal() <= 0){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_SUBTOTAL_MSG));
-//					
-//			} if(vdto.getSubTotalIva() == null || vdto.getSubTotalIva() <= 0) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IVA_MSG));
-//					
-//			} if(vdto.getSubTotalCesc() == null || vdto.getSubTotalCesc() <= 0) { 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_CESC_MSG));
-//				
-//			} if(vdto.getSubTotalDescuentos() == null || vdto.getSubTotalDescuentos() <= 0) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_DESCUENTOS_MSG));
-//					
-//			} if (vdto.getTotalaPagar() == null ||vdto.getTotalaPagar() <= 0) { 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_TOTAL_MSG));
-//			}
-//			if (vdto.getFecha() == null) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FECHA_MSG));
-//					
-//			} if (vdto.getEmpresasId() <= 0){
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IDEMPRESA_MSG));
-//					
-//			} if (vdto.getFactura() <= 0) { 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FACTURA_MSG));
-//					
-//			} if (vdto.getFechaVenta() == null) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FECHAVENTA_MSG));
-//				
-//			} if (vdto.getFechaPago() == null){
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FECHAPAGO_MSG));
-//					
-//			} if (vdto.getImpaga() == null ||vdto.getImpaga().isEmpty()){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IMPAGA_MSG));
-//					
-//			} if (vdto.getImpresa() == null ||vdto.getImpresa().isEmpty()) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IMPRESA_MSG));
-//					
-//			} if (vdto.getFormaPago() == null ||vdto.getFormaPago().isEmpty()){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_FORMAPAGO_MSG));
-//				
-//			} if (vdto.getTipoFactura() == null ||vdto.getTipoFactura().isEmpty()){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_TIPOFACTURA_MSG));
-//					
-//			} if(vdto.getSubTotal() == null || vdto.getSubTotal() <= 0){ 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_SUBTOTAL_MSG));
-//					
-//			} if(vdto.getSubTotalIva() == null || vdto.getSubTotalIva() <= 0) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_IVA_MSG));
-//					
-//			} if(vdto.getSubTotalCesc() == null || vdto.getSubTotalCesc() <= 0) { 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_CESC_MSG));
-//				
-//			} if(vdto.getSubTotalDescuentos() == null || vdto.getSubTotalDescuentos() <= 0) {
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_DESCUENTOS_MSG));
-//					
-//			} if (vdto.getTotalaPagar() == null ||vdto.getTotalaPagar() <= 0) { 
-//				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-//						env.getProperty(AppConstans.ERROR_TOTAL_MSG));
-//			}
-//				
-//
-//			// 2. Instanciando mi entity para setiarla con los datos de la Dto:
-//			Ventas v = new Ventas();
-//			Empresas e = new Empresas();
-//			Facturas f = new Facturas();
-//			Totales p = new Totales();
-//			
-//			v.setFecha(vdto.getFecha());
-//			e.setId(vdto.getEmpresa());
-//			v.setEmpresasId(e);
-//			f.setNumeroFactura(vdto.getFactura());
-//			v.setFactura(f);
-//			v.setFechaVenta(vdto.getFechaVenta());
-//			p.setFechapago(vdto.getFechaPago());
-//			p.setImpaga(vdto.getImpaga());
-//			f.setImpresa(vdto.getImpresa());
-//			p.setFormaPago(vdto.getFechaPago());
-//			f.setTipoFactura(vdto.getTipoFactura());
-//			p.setSubTotal(vdto.getSubTotal());
-//			p.setSubtoTaliva(vdto.getSubTotalIva());
-//			p.setSubTotalcesc(vdto.getSubTotalCesc());
-//			p.setSubTotaldescuentos(vdto.getSubTotalDescuentos());
-//			p.setTotalaPagar(vdto.getTotalaPagar());
-//			v.setId(vdto.getId());
-//			v.setFecha(vdto.getFecha());
-//
-//			// mandando a llamar la clase para setiar objeto(LLAVE FORANEA)
-//			Empresas e = new Empresas();
-//			e.setId(vdto.getEmpresasId());
-//			v.setEmpresasId(e);
-//
-//			v.setFactura(vdto.getFactura());
-//			v.setFechaVenta(vdto.getFechaVenta());
-//			v.setFechaPago(vdto.getFechaPago());
-//			v.setImpaga(vdto.getImpaga());
-//			v.setImpresa(vdto.getImpresa());
-//			v.setFormaPago(vdto.getFormaPago());
-//			v.setTipoFactura(vdto.getTipoFactura());
-//			v.setSubTotal(vdto.getSubTotal());
-//			v.setSubTotalIva(vdto.getSubTotalIva());
-//			v.setSubTotalCesc(vdto.getSubTotalCesc());
-//			v.setSubTotalDescuentos(vdto.getSubTotalDescuentos());
-//			v.setTotalaPagar(vdto.getTotalaPagar());
-//			vR.save(v);
-//			
-//		} catch (DatosNoEncontradosException exc) {
-//			throw exc;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatosNoEncontradosException("409", "Error en el servicio editar datos");
-//		}
-//	} // fin del metodo guardar
-//	
-	
-
-	//metodo para eliminar nomina por factura 
-	public void delete (Integer id) {
+	//metodo para editar
+	public void EditarVentas(EditarDto dto) {
 		try {
-			if(id <= 0 || id == null ) {
-			throw new DatosNoEncontradosException("ERROR EL ID NO EXISTE");
-		}
-			Ventas v = new Ventas();
-			Facturas vv = MAR.buscarSiYaExiste(v.getFactura());
+			
+				Ventas venta = ventasrepository.buscarSiYaExiste(dto.getNumeroFacturas());
+				if (venta != null) {
+					Empresas empresas = empresasrepository.buscarid(dto.getIdEmpresa());
+					
+						if(empresas != null){
+						venta.setEmpresasId(empresas);
+						venta.setFecha(dto.getFecha());
+						ventasrepository.save(venta);
+					
+						}
+						throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_SERVICIOSAVE_COD),
+								env.getProperty(AppConstans.ERROR_BUSCAREMP_MSG));
+				}
+			throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_SERVICIOSAVE_COD),
+						env.getProperty(AppConstans.ERROR_EDITAR_MSG));
+			}catch (DatosNoEncontradosException exc ) {
+				throw exc;
+			}catch (Exception e) 
+			{
+				e.printStackTrace();
+				throw new DatosNoEncontradosException("409", "Error en el servicio eliminar");
+			}
+		} // fin del metodo guardar
+	
 
-		if (vv != null) {
-			throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
-					env.getProperty(AppConstans.ERROR_GUARDAR_MSG));
-		} else {
-			MAR.deleteById(id);
+/////////////////-------------------metodo para eliminar nomina por factura------/////////////////////////////////////////////////////////////////////
+	
+	public void delete (Integer facturas) {
+		try {
+			if(facturas <= 0 || facturas == null ) {
+			throw new DatosNoEncontradosException("ERROR NUMERO FACTURA NO VALIDO ");
 		}
-		MAR.deleteById(id);
-		}catch (DatosNoEncontradosException exc ) {
-			throw exc;
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new DatosNoEncontradosException("409", "Error en el servicio eliminar");
+			
+			Ventas venta = ventasrepository.buscarSiYaExiste(facturas);
+			
+			if (venta != null) {
+				ventasrepository.delete(venta);
+			} 
+			throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_SERVICIOSAVE_COD),
+			env.getProperty(AppConstans.ERROR_BORRAR_MSG));
+			}catch (DatosNoEncontradosException exc ) {
+				throw exc;
+			}catch (Exception e) {
+				e.printStackTrace();
+				throw new DatosNoEncontradosException("409", "Error en el servicio eliminar");
+			}
 		}
-	}
 
 	
 	
@@ -237,7 +157,7 @@ public class VentasService {
 		Double lv = null;
 		 
 		try {
-			lv = MAR.totalizarSubTotales();
+			lv = totalesrepository.totalizarSubTotales();
 			
 			if(lv <= 0) {
 				throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_CAMPOVACIO_COD),
@@ -247,8 +167,7 @@ public class VentasService {
 			throw exc;
 		}catch (Exception e) {
 			e.printStackTrace();
-			throw new DatosNoEncontradosException(env.getProperty(AppConstans.ERROR_SERVICIOSAVE_COD),
-													env.getProperty(AppConstans.ERROR_SUBTOTALLISTSERVICE_MSG));
+			throw new DatosNoEncontradosException("409", "Error en el servicio totalizar subtotales");
 		}
 		return lv; 
 	}
@@ -270,9 +189,13 @@ public class VentasService {
 			 total = totalizarSubT() + totalIva + totalCesc;
 			 utilidades = totalIva  + totalCesc;
 			 
-		}catch(Exception e) {
+		}catch (DatosNoEncontradosException exc ) {
+			throw exc;
+		}catch (Exception e) {
 			e.printStackTrace();
-		} 
+			e.printStackTrace();
+			throw new DatosNoEncontradosException("409", "Error en el servicio imprimir calculos");
+		}
 		return "Subtotal: $" + totalizarSubT() + " , Iva: $" + totalIva +
 				" , Cesc: $" + totalCesc + ", Utilidades: $" + utilidades + " , Total: $" + total;  
 		
@@ -290,14 +213,18 @@ public class VentasService {
 		double tarjeta=0.00;
 		
 		try {
-			cheque = MAR.formaPagoCheque(); 
-			contado =MAR.formaPagoContado(); 
-			credito = MAR.formaPagoCredito(); 
-			tarjeta = MAR.formaPagoTarjeta();
+			cheque = totalesrepository.formaPagoCheque(); 
+			contado =totalesrepository.formaPagoContado(); 
+			credito = totalesrepository.formaPagoCredito(); 
+			tarjeta = totalesrepository.formaPagoTarjeta();
 			 	
-		}catch(Exception e) {
+		}catch (DatosNoEncontradosException exc ) {
+			throw exc;
+		}catch (Exception e) {
 			e.printStackTrace();
-		} 
+			e.printStackTrace();
+			throw new DatosNoEncontradosException("409", "Error en el servicio imprimir efectivo persivido");
+		}
 		return "Efectivo percibido con CHEQUE es de : $" + cheque + ", CONTADO : $" +contado + ", CREDITO : $"+credito + ", TARJETA: $"+tarjeta; 
 		
 	}
