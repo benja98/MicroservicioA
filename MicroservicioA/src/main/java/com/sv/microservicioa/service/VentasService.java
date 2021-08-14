@@ -193,7 +193,6 @@ public class VentasService {
 			throw exc;
 		}catch (Exception e) {
 			e.printStackTrace();
-			e.printStackTrace();
 			throw new DatosNoEncontradosException("409", "Error en el servicio imprimir calculos");
 		}
 		return "Subtotal: $" + totalizarSubT() + " , Iva: $" + totalIva +

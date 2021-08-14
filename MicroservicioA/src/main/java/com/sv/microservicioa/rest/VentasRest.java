@@ -58,7 +58,6 @@ public class VentasRest {
 		 
 		ResponseEntity<?> response = null;
 		try {
-			
 			ventasservice.EditarVentas(vdto);
 			response = responseExceptions.createOkResponse(null, "0", "ok");
 			
@@ -91,15 +90,13 @@ public class VentasRest {
 	
 	 
 	
-	
-	  @GetMapping(value = "/totalizarSubTotales")
-	    private ResponseEntity<String> totalizarSubT() {
-	        
-	        ResponseEntity<Optional<Ventas>> response = null;
+	@GetMapping(value = "/totalizarSubTotales")
+	   private ResponseEntity<String> totalizarSubT() {
+	       
+	       ResponseEntity<Optional<Ventas>> response = null;
 	        try {
- 	           // vS.totalizarSubT();
-	        	ventasservice.imprimirCalculos();
-	            responseExceptions.createOkResponse(null, "0", "ok");
+	           // vS.totalizarSubT();
+	            response = responseExceptions.createOkResponse(null, "0", "ok");
 	           
 	        } catch (DatosNoEncontradosException e) {
 	            response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
@@ -108,7 +105,7 @@ public class VentasRest {
 	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 	        }
 	        System.out.println("Subtotales: ");
-	        return  responseExceptions.createOkResponse(null, "0", "ok");  
+	        return ResponseEntity.ok(ventasservice.imprimirCalculos());   
 	    }
 	
 	  
@@ -119,15 +116,15 @@ public class VentasRest {
 	        ResponseEntity<Optional<Ventas>> response = null;
 	        try {
 	           // vS.totalizarSubT();
-	        	ventasservice.imprimirEfectivoPercibido();
+	            response = responseExceptions.createOkResponse(null, "0", "ok");
 	           
 	        } catch (DatosNoEncontradosException e) {
 	            response = responseExceptions.createFailResponse(null, e.getCod(), e.getMessage());
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo el efectivo persivido");
+	            response = responseExceptions.createFailResponse(null, "409", "No se totalizo los subTotales");
 	        }
-	        return responseExceptions.createOkResponse(null, "0", "ok");
+	        return ResponseEntity.ok(ventasservice.imprimirEfectivoPercibido());   
 	    }
 
 }
