@@ -72,8 +72,8 @@ public class VentasRest {
 	
 ////////////////----ELIMINAR-----///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	@DeleteMapping(value = "/eliminar/{id}")																				
-	private ResponseEntity<Void> eliminarFactura (@PathVariable("id") Integer facturas){
+	@DeleteMapping(value = "/eliminar/{factura}")																				
+	private ResponseEntity<Void> eliminarFactura (@PathVariable("factura") Integer facturas){
 		ResponseEntity<Void> response = null;	
 	try {
 		ventasservice.delete(facturas);
@@ -88,7 +88,8 @@ public class VentasRest {
 	}
 	
 	
-	 
+////////////////----TOTALIZAR SUBTOTALES-----///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 	@GetMapping(value = "/totalizarSubTotales")
 	   private ResponseEntity<String> totalizarSubT() {
@@ -108,7 +109,8 @@ public class VentasRest {
 	        return ResponseEntity.ok(ventasservice.imprimirCalculos());   
 	    }
 	
-	  
+////////////////----TOTALIZAR EFECTIVO PERSIVIDO-----///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	  
 	  @GetMapping(value = "/totalizarEfectivoPercibido")
 	    private ResponseEntity<String> efectivoPercibido() {

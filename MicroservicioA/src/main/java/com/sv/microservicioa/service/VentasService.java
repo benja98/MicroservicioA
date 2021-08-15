@@ -42,7 +42,7 @@ public class VentasService {
 	@Autowired
 	GuardarRepository guardarepository;
 
-	// 1. metodo para guardar:
+/////////////////-------------------metodo para guardar------/////////////////////////////////////////////////////////////////////
 		public ListDto saveUserList(ListDto vdto) {
 			ListDto savedList = new ListDto();
 			try {
@@ -97,7 +97,8 @@ public class VentasService {
 
 	
 
-	//metodo para editar
+/////////////////-------------------metodo para editar------/////////////////////////////////////////////////////////////////////
+
 	public void EditarVentas(EditarDto dto) {
 		try {
 			
@@ -128,6 +129,9 @@ public class VentasService {
 
 /////////////////-------------------metodo para eliminar nomina por factura------/////////////////////////////////////////////////////////////////////
 	
+	
+	
+	
 	public void delete (Integer facturas) {
 		try {
 			if(facturas <= 0 || facturas == null ) {
@@ -150,9 +154,11 @@ public class VentasService {
 		}
 
 	
-	
+/////////////////-------------------Metodo para sumar los SubTotales------/////////////////////////////////////////////////////////////////////
 
-	//2.0 Metodo para sumar los SubTotales
+	
+	
+	
 	public Double totalizarSubT() {
 		Double lv = null;
 		 
@@ -173,7 +179,11 @@ public class VentasService {
 	}
 	
 	
-	// 2.1 continuacion del metodo totalizarSubT
+	//continuacion del metodo totalizarSubT
+	
+
+	
+	
 	public String imprimirCalculos() {
 		final double iva;
 		double totalIva = 0.00;
@@ -201,9 +211,11 @@ public class VentasService {
 	}  // fin del metodo imprimir calculos de ley.
 	
 	
+	//Metodo para imprimir el efectivo percibido de los tipos de pago:
 	
 	
-	// 3. Metodo para imprimir el efectivo percibido de los tipos de pago:
+	
+	
 	public String imprimirEfectivoPercibido() { 
 		// Instanciando nuestras querys personalizadas:
 		double cheque=0.00;
